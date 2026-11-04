@@ -7,10 +7,12 @@
     <title>ระบบบันทึกนักเรียนมาสาย - โรงเรียนเทพศิรินทร์พุแค สระบุรี</title>
 
     <!-- โลโก้บนแท็บเบราว์เซอร์
-         1) logo.png ในโฟลเดอร์เดียวกับไฟล์นี้ (แสดงทันที และใช้เป็นไอคอนตอน "เพิ่มไปยังหน้าจอหลัก" บนมือถือ)
+         1) icon-192.png ในโฟลเดอร์เดียวกับไฟล์นี้ (แสดงทันที และใช้เป็นไอคอนตอน "เพิ่มไปยังหน้าจอหลัก" บนมือถือ)
          2) เมื่อโหลดเสร็จ จะเปลี่ยนเป็นโลโก้ที่อัปโหลดไว้ในหน้า "ผู้ดูแลระบบ > ตั้งค่าหน้าเว็บ" อัตโนมัติ -->
-    <link id="fav-icon" rel="icon" type="image/png" href="logo.png">
-    <link id="fav-apple" rel="apple-touch-icon" href="logo.png">
+    <link id="fav-icon" rel="icon" type="image/png" sizes="48x48" href="favicon.png">
+    <link id="fav-apple" rel="apple-touch-icon" href="icon-192.png">
+    <!-- ไอคอนตอน "ติดตั้งเป็นแอป" ใช้จากไฟล์นี้ (ต้องเป็นไฟล์รูปใน repo ไม่ใช่โลโก้จากหน้าตั้งค่า) -->
+    <link rel="manifest" href="manifest.json">
 
     <style>
         html, body { margin: 0; height: 100%; background: #ECEFE9; }
@@ -34,7 +36,6 @@
                     var icon = document.getElementById("fav-icon");
                     icon.type = type;
                     icon.href = s.logo;
-                    document.getElementById("fav-apple").href = s.logo;
                 }
                 if (s.appName && s.schoolName) {
                     var school = /^โรงเรียน/.test(s.schoolName) ? s.schoolName : "โรงเรียน" + s.schoolName;
