@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#1F4D3A">
+    <title>ระบบบันทึกนักเรียนมาสาย - โรงเรียนเทพศิรินทร์พุแค สระบุรี</title>
+
+    <!-- โลโก้บนแท็บเบราว์เซอร์
+         1) logo.png ในโฟลเดอร์เดียวกับไฟล์นี้ (แสดงทันที และใช้เป็นไอคอนตอน "เพิ่มไปยังหน้าจอหลัก" บนมือถือ)
+         2) เมื่อโหลดเสร็จ จะเปลี่ยนเป็นโลโก้ที่อัปโหลดไว้ในหน้า "ผู้ดูแลระบบ > ตั้งค่าหน้าเว็บ" อัตโนมัติ -->
+    <link id="fav-icon" rel="icon" type="image/png" href="logo.png">
+    <link id="fav-apple" rel="apple-touch-icon" href="logo.png">
+
+    <style>
+        html, body { margin: 0; height: 100%; background: #ECEFE9; }
+        iframe { display: block; width: 100%; height: 100vh; height: 100dvh; border: 0; }
+    </style>
+</head>
+<body>
+    <!-- ลิงก์เว็บแอป (/exec) ของ Apps Script: ถ้า Deploy ใหม่แล้วได้ลิงก์ใหม่ ให้แก้ทั้ง src ด้านล่าง และ APP_URL ในสคริปต์ -->
+    <iframe id="app" src="https://script.google.com/macros/s/AKfycbw3ao1fusXOj2pndm_seMSi-HtM9DrRfodc37NBvfaIfem5H8QGjH1DEuC0MItGabeX/exec"
+            title="ระบบบันทึกนักเรียนมาสาย" allow="clipboard-write"></iframe>
+
+    <script>
+        (function () {
+            var APP_URL = "https://script.google.com/macros/s/AKfycbw3ao1fusXOj2pndm_seMSi-HtM9DrRfodc37NBvfaIfem5H8QGjH1DEuC0MItGabeX/exec";
+            var CACHE_KEY = "lateApp.wrapper.settings";
+
+            function apply(s) {
+                if (!s) return;
+                if (/^data:image\/(png|jpeg|webp);base64,/.test(s.logo || "")) {
+                    var type = s.logo.slice(5, s.logo.indexOf(";"));
+                    var icon = document.getElementById("fav-icon");
+                    icon.type = type;
+                    icon.href = s.logo;
+                    document.getElementById("fav-apple").href = s.logo;
+                }
+                if (s.appName && s.schoolName) {
+                    var school = /^โรงเรียน/.test(s.schoolName) ? s.schoolName : "โรงเรียน" + s.schoolName;
+                    document.title = s.appName + " - " + school;
+                }
+            }
+
+            // แสดงโลโก้ที่จำไว้จากครั้งก่อนทันที ไม่ต้องรอโหลด
+            try { apply(JSON.parse(localStorage.getItem(CACHE_KEY) || "null")); } catch (e) {}
+
+            // ดึงโลโก้และชื่อระบบล่าสุดจากการตั้งค่า
+            var cb = "wrapperSettings_" + Math.round(Math.random() * 1e6);
+            var script = document.createElement("script");
+            window[cb] = function (res) {
+                delete window[cb];
+                script.remove();
+                if (!res || res.status !== "success" || !res.data) return;
+                var s = { logo: res.data.logo || "", appName: res.data.appName, schoolName: res.data.schoolName };
+                apply(s);
+                try { localStorage.setItem(CACHE_KEY, JSON.stringify(s)); } catch (e) {}
+            };
+            script.onerror = function () { delete window[cb]; script.remove(); };
+            script.src = APP_URL + "?action=getSettings&callback=" + cb;
+            document.head.appendChild(script);
+        })();
+    </script>
+</body>
+</html>
