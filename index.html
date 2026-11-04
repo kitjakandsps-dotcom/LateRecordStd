@@ -1,66 +1,148 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#1F4D3A">
-    <title>ระบบบันทึกนักเรียนมาสาย - โรงเรียนเทพศิรินทร์พุแค สระบุรี</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ระบบบันทึกนักเรียนมาสาย - โรงเรียนเทพศิรินทร์พุแค สระบุรี</title>
+  <meta name="description" content="บันทึกและติดตามนักเรียนมาสาย กลุ่มกิจการนักเรียน โรงเรียนเทพศิรินทร์พุแค สระบุรี">
 
-    <!-- โลโก้บนแท็บเบราว์เซอร์
-         1) icon-192.png ในโฟลเดอร์เดียวกับไฟล์นี้ (แสดงทันที และใช้เป็นไอคอนตอน "เพิ่มไปยังหน้าจอหลัก" บนมือถือ)
-         2) เมื่อโหลดเสร็จ จะเปลี่ยนเป็นโลโก้ที่อัปโหลดไว้ในหน้า "ผู้ดูแลระบบ > ตั้งค่าหน้าเว็บ" อัตโนมัติ -->
-    <link id="fav-icon" rel="icon" type="image/png" sizes="48x48" href="favicon.png">
-    <link id="fav-apple" rel="apple-touch-icon" href="icon-192.png">
-    <!-- ไอคอนตอน "ติดตั้งเป็นแอป" ใช้จากไฟล์นี้ (ต้องเป็นไฟล์รูปใน repo ไม่ใช่โลโก้จากหน้าตั้งค่า) -->
-    <link rel="manifest" href="manifest.json">
+  <!-- ใช้แค่ 2 ไฟล์: index.html (ไฟล์นี้) และ logo.png (ตราโรงเรียน สี่เหลี่ยมจัตุรัส 512x512) วางไว้โฟลเดอร์เดียวกัน
+       logo.png ใช้เป็นทั้งไอคอนบนแท็บ ไอคอนหน้าจอหลักมือถือ และไอคอนตอน "ติดตั้งเป็นแอป" บนคอมพิวเตอร์ -->
+  <link rel="icon" type="image/png" sizes="512x512" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <link id="app-manifest" rel="manifest">
+  <meta name="application-name" content="ระบบมาสาย">
+  <meta name="apple-mobile-web-app-title" content="ระบบมาสาย">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#1F4D3A">
 
-    <style>
-        html, body { margin: 0; height: 100%; background: #ECEFE9; }
-        iframe { display: block; width: 100%; height: 100vh; height: 100dvh; border: 0; }
-    </style>
+  <!-- ตัวอย่างลิงก์เวลาแชร์ใน LINE / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ระบบบันทึกนักเรียนมาสาย">
+  <meta property="og:description" content="กลุ่มกิจการนักเรียน โรงเรียนเทพศิรินทร์พุแค สระบุรี">
+
+  <script>
+    // สร้าง Web App Manifest ในไฟล์นี้เลย (ไม่ต้องมีไฟล์ manifest.json แยก)
+    // ทำให้ Chrome / Edge ใช้ logo.png เป็นไอคอนแอปตอนติดตั้ง แทนตัวอักษร "ร"
+    (function () {
+      var base = new URL("./", location.href).href;
+      var manifest = {
+        name: "ระบบบันทึกนักเรียนมาสาย",
+        short_name: "ระบบมาสาย",
+        description: "บันทึกและติดตามนักเรียนมาสาย โรงเรียนเทพศิรินทร์พุแค สระบุรี",
+        id: base,
+        start_url: base,
+        scope: base,
+        display: "standalone",
+        background_color: "#FFFFFF",
+        theme_color: "#1F4D3A",
+        lang: "th",
+        icons: [
+          { src: base + "logo.png", sizes: "512x512", type: "image/png", purpose: "any" },
+          { src: base + "logo.png", sizes: "192x192", type: "image/png", purpose: "any" }
+        ]
+      };
+      var blob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
+      document.getElementById("app-manifest").href = URL.createObjectURL(blob);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://script.google.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root { --ink: #17201B; --muted: #5D6962; --green: #1F4D3A; --green-2: #2F6B4F; --marigold: #E8B23A; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #fff; }
+    body { font-family: 'Anuphan', 'Leelawadee UI', 'Noto Sans Thai', system-ui, sans-serif; color: var(--ink); overflow: hidden; }
+
+    /* ระบบจริง (Google Apps Script) แสดงเต็มหน้าจอ */
+    #app { position: fixed; inset: 0; width: 100%; height: 100%; height: 100dvh; border: 0; display: block; background: #fff; }
+
+    /* หน้าเปิดระหว่างรอ Apps Script โหลด (ปกติ 2-5 วินาที) */
+    #splash { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px; padding: 24px; text-align: center; background: #fff; transition: opacity .3s ease, visibility .3s; }
+    #splash::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px;
+      background: linear-gradient(90deg, var(--green) 0 75%, var(--marigold) 75% 100%); }
+    #splash.is-done { opacity: 0; visibility: hidden; }
+    .logo { width: 96px; height: 96px; object-fit: contain; margin-bottom: 14px; }
+    [hidden] { display: none !important; }
+    .name { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.35; }
+    .sub { margin: 0; font-size: 14px; color: var(--muted); }
+    .bar { position: relative; width: 160px; height: 4px; margin: 26px 0 10px; border-radius: 4px; background: #E6EFE9; overflow: hidden; }
+    .bar span { position: absolute; top: 0; bottom: 0; width: 40%; border-radius: 4px; background: var(--green); animation: slide 1.1s ease-in-out infinite; }
+    @keyframes slide { from { left: -40%; } to { left: 100%; } }
+    .hint { margin: 0; font-size: 14px; color: var(--muted); min-height: 1.5em; }
+    .direct { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 14px; padding: 0 20px; border-radius: 12px;
+      background: var(--green); color: #fff; font-weight: 600; font-size: 15px; text-decoration: none; }
+    .direct:hover { background: var(--green-2); }
+    .direct:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(31, 77, 58, .35); }
+    @media (prefers-reduced-motion: reduce) { .bar span { animation: none; left: 30%; } #splash { transition: none; } }
+  </style>
 </head>
 <body>
-    <!-- ลิงก์เว็บแอป (/exec) ของ Apps Script: ถ้า Deploy ใหม่แล้วได้ลิงก์ใหม่ ให้แก้ทั้ง src ด้านล่าง และ APP_URL ในสคริปต์ -->
-    <iframe id="app" src="https://script.google.com/macros/s/AKfycbw3ao1fusXOj2pndm_seMSi-HtM9DrRfodc37NBvfaIfem5H8QGjH1DEuC0MItGabeX/exec"
-            title="ระบบบันทึกนักเรียนมาสาย" allow="clipboard-write"></iframe>
+  <div id="splash" role="status" aria-live="polite">
+    <img id="splash-logo" class="logo" src="logo.png" alt="">
+    <p class="name">ระบบบันทึกนักเรียนมาสาย</p>
+    <p class="sub">กลุ่มกิจการนักเรียน โรงเรียนเทพศิรินทร์พุแค สระบุรี</p>
+    <div class="bar" aria-hidden="true"><span></span></div>
+    <p id="splash-hint" class="hint">กำลังเปิดระบบ...</p>
+    <a id="open-direct" class="direct" target="_blank" rel="noopener" hidden>เปิดระบบในหน้าต่างใหม่</a>
+  </div>
 
-    <script>
-        (function () {
-            var APP_URL = "https://script.google.com/macros/s/AKfycbw3ao1fusXOj2pndm_seMSi-HtM9DrRfodc37NBvfaIfem5H8QGjH1DEuC0MItGabeX/exec";
-            var CACHE_KEY = "lateApp.wrapper.settings";
+  <iframe id="app" title="ระบบบันทึกนักเรียนมาสาย" allow="clipboard-write; fullscreen"></iframe>
 
-            function apply(s) {
-                if (!s) return;
-                if (/^data:image\/(png|jpeg|webp);base64,/.test(s.logo || "")) {
-                    var type = s.logo.slice(5, s.logo.indexOf(";"));
-                    var icon = document.getElementById("fav-icon");
-                    icon.type = type;
-                    icon.href = s.logo;
-                }
-                if (s.appName && s.schoolName) {
-                    var school = /^โรงเรียน/.test(s.schoolName) ? s.schoolName : "โรงเรียน" + s.schoolName;
-                    document.title = s.appName + " - " + school;
-                }
-            }
+  <noscript>
+    <p style="position:fixed;inset:auto 0 24px;z-index:20;text-align:center">กรุณาเปิดใช้ JavaScript ในเบราว์เซอร์เพื่อใช้งานระบบ</p>
+  </noscript>
 
-            // แสดงโลโก้ที่จำไว้จากครั้งก่อนทันที ไม่ต้องรอโหลด
-            try { apply(JSON.parse(localStorage.getItem(CACHE_KEY) || "null")); } catch (e) {}
+  <script>
+    // ==========================================================
+    // ตั้งค่า: วางลิงก์เว็บแอป Google Apps Script ของระบบมาสาย (ลงท้ายด้วย /exec) ระหว่างเครื่องหมายคำพูด
+    // หาได้จาก Apps Script > Deploy (การทำให้ใช้งานได้) > Manage deployments > Web app URL
+    // ==========================================================
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw3ao1fusXOj2pndm_seMSi-HtM9DrRfodc37NBvfaIfem5H8QGjH1DEuC0MItGabeX/exec";
 
-            // ดึงโลโก้และชื่อระบบล่าสุดจากการตั้งค่า
-            var cb = "wrapperSettings_" + Math.round(Math.random() * 1e6);
-            var script = document.createElement("script");
-            window[cb] = function (res) {
-                delete window[cb];
-                script.remove();
-                if (!res || res.status !== "success" || !res.data) return;
-                var s = { logo: res.data.logo || "", appName: res.data.appName, schoolName: res.data.schoolName };
-                apply(s);
-                try { localStorage.setItem(CACHE_KEY, JSON.stringify(s)); } catch (e) {}
-            };
-            script.onerror = function () { delete window[cb]; script.remove(); };
-            script.src = APP_URL + "?action=getSettings&callback=" + cb;
-            document.head.appendChild(script);
-        })();
-    </script>
+    const SLOW_AFTER_MS = 15000; // โหลดเกินเวลานี้ แสดงปุ่มเปิดในหน้าต่างใหม่
+
+    (function () {
+      const splash = document.getElementById("splash");
+      const hint = document.getElementById("splash-hint");
+      const direct = document.getElementById("open-direct");
+      const frame = document.getElementById("app");
+      const logo = document.getElementById("splash-logo");
+
+      // ยังไม่มีไฟล์ logo.png: ซ่อนรูป แสดงเฉพาะชื่อระบบ
+      if (logo.complete && logo.naturalWidth === 0) logo.hidden = true;
+      else logo.addEventListener("error", function () { logo.hidden = true; });
+
+      const validUrl = /^https:\/\/script\.google\.com\/(a\/macros\/[^/]+\/|macros\/)s\/[A-Za-z0-9_-]{20,}\/exec\/?(\?.*)?$/.test(WEB_APP_URL);
+      if (!validUrl) {
+        document.querySelector(".bar").hidden = true;
+        hint.textContent = "ยังไม่ได้ตั้งลิงก์เว็บแอป: ผู้ดูแลกรุณาแก้ค่า WEB_APP_URL ในไฟล์ index.html";
+        return;
+      }
+
+      direct.href = WEB_APP_URL;
+      let loaded = false;
+      frame.addEventListener("load", function () {
+        if (!frame.getAttribute("src")) return;
+        loaded = true;
+        splash.classList.add("is-done");
+        splash.setAttribute("aria-hidden", "true");
+        try { frame.focus(); } catch (e) {}
+      });
+      frame.src = WEB_APP_URL;
+
+      setTimeout(function () {
+        if (loaded) return;
+        hint.textContent = "ใช้เวลานานกว่าปกติ ถ้าหน้าเว็บไม่ขึ้น กดปุ่มด้านล่างเพื่อเปิดระบบโดยตรง";
+        direct.hidden = false;
+      }, SLOW_AFTER_MS);
+    })();
+  </script>
 </body>
 </html>
